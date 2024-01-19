@@ -12,10 +12,10 @@ IF %ERRORLEVEL% NEQ 0 (
 
 REM Install dependencies using pnpm
 echo Installing dependencies...
-pnpm install
+pnpm install --frozen-lockfile
 
-REM Run the project
-echo Starting the project...
+REM Run the script
+echo Starting the script...
 pnpm run start
 
 ENDLOCAL
