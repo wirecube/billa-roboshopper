@@ -1,0 +1,18 @@
+[
+  {
+    "url": "https://shop.billa.at/produkte/iglo-green-cuisine-vegane-dino-nuggets-00719357",
+    "quantity": 1
+  },
+  {
+    "url": "https://shop.billa.at/produkte/baeckerland-topfengolatsche-2er-00424234",
+    "quantity": 1
+  },
+  {
+    "url": "https://shop.billa.at/produkte/baeckerland-topfengolatsche-2er-00424234",
+    "quantity": 2,
+    "fallback": {
+      "url": "https://shop.billa.at/produkte/clever-huehner-nuggets-00500842",
+      "quantity": 2
+    }
+  }
+]
