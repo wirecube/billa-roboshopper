@@ -73,6 +73,7 @@ async function addToCart(page: Page, product: Product, i: number) {
   if (productNotAvailable && product.fallback) {
     console.log("Product not available, trying fallback");
     await addToCart(page, product.fallback, i);
+    await page.waitForTimeout(500);
     return;
   }
 
@@ -142,4 +143,3 @@ async function main() {
 
 main();
 
-// await page.screenshot({ path: `zzz_example.png` });
