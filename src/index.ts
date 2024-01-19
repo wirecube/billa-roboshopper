@@ -52,7 +52,7 @@ async function changeToRightQuantity(
   quantityToDecrement: number,
   selector: string
 ) {
-  console.log(`Clicking ${selector} ${quantityToDecrement} times`);
+  // console.log(`Clicking ${selector} ${quantityToDecrement} times`);
   for (let i = 0; i < quantityToDecrement; i++) {
     await page.click(selector);
     await page.waitForTimeout(500);
@@ -61,7 +61,6 @@ async function changeToRightQuantity(
 
 async function addToCart(page: Page, product: Product, i: number) {
   await page.goto(product.url, { waitUntil: "networkidle" });
-  await page.screenshot({ path: `zzz_example-${i}-pre.png` });
 
   const productNotAvailable = await page.isVisible(
     ".ws-product-product-unavailable-text"
@@ -90,12 +89,7 @@ async function addToCart(page: Page, product: Product, i: number) {
 
   const currentQuantity =
     Number(await page.inputValue("[data-test='select-quantity-input']")) ?? 0;
-  console.log(
-    "Current quantity: ",
-    currentQuantity,
-    "Expected: ",
-    product.quantity
-  );
+  
   if (currentQuantity < product.quantity) {
     await changeToRightQuantity(
       page,
@@ -110,8 +104,6 @@ async function addToCart(page: Page, product: Product, i: number) {
       "[data-test='select-quantity-decrement']"
     );
   }
-
-  await page.screenshot({ path: `zzz_example-${i}.png` });
 }
 
 async function fillCart(page: Page, shoppingList: ShoppingList) {
