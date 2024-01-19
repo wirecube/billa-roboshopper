@@ -3,10 +3,8 @@
   "version": "1.0.0",
   "description": "A script to add a list of item to the Billa Online Shop automatically",
   "main": "src/index.ts",
-  "bin": "dist/index.js",
   "scripts": {
-    "start": "ts-node src/index.ts",
-    "build": "tsc src/index.ts --outDir dist"
+    "start": "ts-node src/index.ts"
   },
   "author": "Wirecube",
   "license": "MIT",

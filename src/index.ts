@@ -6,7 +6,6 @@ import {
   type ShoppingList,
 } from "./types/ShoppingList";
 import { chromium, Page } from "playwright";
-import { z } from "zod";
 
 // ### ENV VALIDATION
 console.log(`Billa Roboshopper`);
