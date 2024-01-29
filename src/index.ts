@@ -28,7 +28,6 @@ if (
   process.exit(1);
 }
 
-const MAX_RETRIES = 3;
 const jsonFilename = process.env.JSON_FILENAME;
 const billaEmail = process.env.BILLA_EMAIL;
 const billaPassword = process.env.BILLA_PASSWORD;
@@ -48,25 +47,6 @@ async function logout(page: Page) {
   await page.click('[data-test="logout-button"]');
 }
 
-async function retryIfBillaFails(page: Page, callback: () => Promise<void>) {
-  let retries = 0;
-  let done = false;
-  while (retries < MAX_RETRIES && !done) {
-    try {
-      await callback();
-      done = true;
-    } catch (e) {
-      await page.reload();
-      await page.waitForTimeout(500);
-      retries++;
-      console.log(`> Billa failed, retrying (${retries}/${MAX_RETRIES})`);
-    }
-  }
-  if (!done) {
-    console.error(`> Billa failed after ${MAX_RETRIES} retries`);
-  }
-}
-
 async function changeToRightQuantity(
   page: Page,
   quantityToDecrement: number,
@@ -74,7 +54,7 @@ async function changeToRightQuantity(
 ) {
   for (let i = 0; i < quantityToDecrement; i++) {
     await page.click(selector);
-    await page.waitForTimeout(200);
+    await page.waitForTimeout(1000);
   }
 }
 
@@ -97,25 +77,28 @@ async function addToCart(page: Page, product: Product, i: number) {
   }
 
   const productNotAdded = !(await page.isVisible(
-    "[data-test='product-main'] [data-test='select-quantity-decrement']"
+    "[data-test='select-quantity-decrement']"
   ));
   if (productNotAdded) {
-    await retryIfBillaFails(page, async () => {
-      const addToCartButton = await page
-        .locator("[data-test='product-main']")
-        .getByText("In den Warenkorb");
-      await addToCartButton.isVisible();
-      await addToCartButton.click();
+    try{
+      await page.click(".ws-product-actions__add-to-cart");
+      await page.waitForTimeout(500);
       console.log("> Added product: ", product.url);
-    });
+    } catch (e) {
+      if (product.fallback) {
+        console.log("Product not available, trying fallback");
+        await addToCart(page, product.fallback, i);
+        await page.waitForTimeout(500);
+        return;
+      }
+    }
   } else {
     console.log("> Product already added: ", product.url);
   }
 
   const currentQuantityInput = await page.locator(
-    "[data-test='product-main'] [data-test='select-quantity-input']"
+    "[data-test='select-quantity-input']"
   );
-  currentQuantityInput.isVisible({ timeout: 3000 });
   const currentQuantity =
     Number(
       String(await currentQuantityInput.evaluate((el) => el["_value"])).replace(

@@ -18,4 +18,6 @@ REM Run the script
 echo Starting the script...
 pnpm run start
 
+pause
+
 ENDLOCAL
