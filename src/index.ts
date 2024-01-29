@@ -88,20 +88,28 @@ async function addToCart(page: Page, product: Product, i: number) {
     console.log("> Product already added: ", product.url);
   }
 
+  const currentQuantityInput = await page.locator(
+    "[data-test='select-quantity-input']"
+  );
   const currentQuantity =
-    Number(await page.inputValue("[data-test='select-quantity-input']")) ?? 0;
-  
+    Number(
+      String(await currentQuantityInput.evaluate((el) => el["_value"])).replace(
+        ",",
+        "."
+      )
+    ) ?? 0;
+
   if (currentQuantity < product.quantity) {
     await changeToRightQuantity(
       page,
-      product.quantity - currentQuantity,
+      Math.floor(product.quantity - currentQuantity),
       "[data-test='select-quantity-increment']"
     );
   }
   if (currentQuantity > product.quantity) {
     await changeToRightQuantity(
       page,
-      currentQuantity - product.quantity,
+      Math.floor(currentQuantity - product.quantity),
       "[data-test='select-quantity-decrement']"
     );
   }
