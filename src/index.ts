@@ -102,10 +102,9 @@ async function addToCart(page: Page, product: Product, i: number) {
   if (productNotAdded) {
     await retryIfBillaFails(page, async () => {
       const addToCartButton = await page
-      .locator("[data-test='product-main']")
-      .getByText("In den Warenkorb");
+        .locator("[data-test='product-main']")
+        .getByText("In den Warenkorb");
       await addToCartButton.isVisible();
-      await page.screenshot({ path: `adding-${i}.png` });
       await addToCartButton.click();
       console.log("> Added product: ", product.url);
     });
@@ -113,34 +112,32 @@ async function addToCart(page: Page, product: Product, i: number) {
     console.log("> Product already added: ", product.url);
   }
 
-  await retryIfBillaFails(page, async () => {
-    const currentQuantityInput = await page.locator(
-      "[data-test='product-main'] [data-test='select-quantity-input']"
-    );
-    currentQuantityInput.isVisible({ timeout: 3000 });
-    await page.screenshot({ path: `${i}.png` });
-    const currentQuantity =
-      Number(
-        String(
-          await currentQuantityInput.evaluate((el) => el["_value"])
-        ).replace(",", ".")
-      ) ?? 0;
+  const currentQuantityInput = await page.locator(
+    "[data-test='product-main'] [data-test='select-quantity-input']"
+  );
+  currentQuantityInput.isVisible({ timeout: 3000 });
+  const currentQuantity =
+    Number(
+      String(await currentQuantityInput.evaluate((el) => el["_value"])).replace(
+        ",",
+        "."
+      )
+    ) ?? 0;
 
-    if (currentQuantity < product.quantity) {
-      await changeToRightQuantity(
-        page,
-        Math.floor(product.quantity - currentQuantity),
-        "[data-test='select-quantity-increment']"
-      );
-    }
-    if (currentQuantity > product.quantity) {
-      await changeToRightQuantity(
-        page,
-        Math.floor(currentQuantity - product.quantity),
-        "[data-test='select-quantity-decrement']"
-      );
-    }
-  });
+  if (currentQuantity < product.quantity) {
+    await changeToRightQuantity(
+      page,
+      Math.floor(product.quantity - currentQuantity),
+      "[data-test='select-quantity-increment']"
+    );
+  }
+  if (currentQuantity > product.quantity) {
+    await changeToRightQuantity(
+      page,
+      Math.floor(currentQuantity - product.quantity),
+      "[data-test='select-quantity-decrement']"
+    );
+  }
 }
 
 async function fillCart(page: Page, shoppingList: ShoppingList) {
